@@ -6,6 +6,7 @@ use App\Repository\QuizRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: QuizRepository::class)]
 class Quiz
@@ -13,12 +14,19 @@ class Quiz
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['quiz:read', 'quizResult'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['quiz:read', 'quizResult'])]
     private ?string $title = null;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    #[Groups(['quiz:read', 'quizResult'])]
+    private ?string $difficulty = null;
+
     #[ORM\OneToMany(mappedBy: 'quiz', targetEntity: Question::class)]
+    #[Groups(['quiz:read', 'quizResult'])]
     private Collection $questions;
 
     #[ORM\OneToMany(mappedBy: 'quiz', targetEntity: QuizResult::class)]
@@ -43,6 +51,18 @@ class Quiz
     public function setTitle(string $title): static
     {
         $this->title = $title;
+
+        return $this;
+    }
+
+    public function getDifficulty(): ?string
+    {
+        return $this->difficulty;
+    }
+
+    public function setDifficulty(string $difficulty): static
+    {
+        $this->difficulty = $difficulty;
 
         return $this;
     }
